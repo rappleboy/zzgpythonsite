@@ -1,0 +1,25 @@
+{% extends "base.html" %} <!-- 继承baee模板, 使用block内容代替里面的块定义部分 -->
+{% block title %} blog titles {% endblock %}
+<!-- 下面开始定义内容block -->
+{% block content %}
+<div class="row text-center vertical-moddle-sm">
+	<h1>我的博客</h1>
+</div>
+<div class = "row">
+	<div class = "col-xs-12 col-md-8">
+	<ul>
+		{% for blog in blogs %}
+			<li><a href="{{blog.id}}">{{blog.title}}</a></li> <!-- 第一层表达式,第二层这里表示引用变量 -->
+		{% endfor %}
+	</ul>
+	
+	</div>
+	<div class="col-xs-6 col-md-4">
+	<h2>广告</h2>
+	<p>我的广告www.tatanic.com</p>
+	<img widht="200px" src="https://mrwallpaper.com/images/high/cup-of-tea-and-wave-6sz8ir0o512jmq82.webp">
+	</div>
+
+
+</div>
+{% endblock %}
