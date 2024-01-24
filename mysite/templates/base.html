@@ -6,10 +6,10 @@
 	<meta http-equiv="X-UA-Compatible" content = "IE=Edge">
 	<meta charset="utf-8">
 	<meta name="viewport" content="widht=device-width,initial-scale=1">
+	{% load static %}
 	<title>{% block title%}{%endblock%}</title><!-- title块标签 -->
 	<!-- 引入样式表文件 -->
-	<link rel="stylesheet" href="http://necolas.github.io/normalize.css/">
-	<link rel="stylesheet" href ="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href ="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
 	{% include "header.html" %}
@@ -20,8 +20,9 @@
 	</div>
 	{% include "footer.html" %}
 	{% block javascript %}{%endblock%}
-	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-	<script src ="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	
 </body>	
 
 

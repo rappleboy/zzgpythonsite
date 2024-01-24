@@ -1,0 +1,105 @@
+{% extends "article/base.html" %}
+{% load static %}
+{% block title %}article post{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'editor/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}"/>
+
+<div style="margin-left:10px">
+	<form class="form-horizontal" action="." method="post">{% csrf_token %}
+	<div class="row" style="margin-top:10px;">
+		<div class="col-md-2 text-right"><span>Title:</span></div>
+		<div class="col-md-10 text-left">{{article_post_form.title}}</div>
+	
+	</div>
+	<div class="row" style="margin-top:10px;">
+		<div class="col-md-2 text-right"><span>Column:</span></div>
+		<div class="col-md-10 text-left">
+			<select id="which_column">
+			<!-- 下拉选择空间 -->
+				{% for column in article_columns %}
+				<option value="{{column.id}}">{{column.column}}</option>
+				{% endfor %}
+			
+			</select>
+		</div>
+	</div>
+	<div class="row" style="margin-top:10px;">
+		<div class="col-md-2 text-right"><span>Content:</span></div>
+		<!-- 使用markdown空间 -->
+            
+            
+            <div id="test-editormd" class="col-md-10 text-left">
+                <textarea style="display:none;" id="id_body">
+                </textarea>
+            </div> 
+            
+	
+	</div>	
+	<div class="row" style="margin-top:10px;">
+		<input type="button" class="btn btn-primary btn-lg" value="SUBMIT" onclick="publish_article();">
+	
+	</div>	
+	
+	
+	</form>
+
+</div>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/layer.js' %}"></script>
+<script src="{% static 'editor/editormd.min.js' %}"></script>
+
+ 
+<script type="text/javascript">
+			var testEditor;
+
+            $(function() {
+                testEditor = editormd("test-editormd", {
+                    width   : "90%",
+                    height  : 640,
+                    syncScrolling : "single",
+                    path    : "{% static 'editor/lib/' %}"
+                });
+                
+                /*
+                // or
+                testEditor = editormd({
+                    id      : "test-editormd",
+                    width   : "90%",
+                    height  : 640,
+                    path    : "../lib/"
+                });
+                */
+            });
+</script>
+
+<script type="text/javascript">
+function publish_article(){
+	//编辑图标的父类tr,下面第一个td的text 得到name
+	var title = $("#id_title").val(); //由form自动分配的id
+	var column_id = $("#which_column").val(); //
+	var body = $("#id_body").val();			
+	//调用ajax异步提交
+	$.ajax({
+		url:'{% url "article:article_post" %}',
+		type:'POST',
+		data:{"column_id":column_id,"title":title,"body":body},
+		success:function(e){
+			if(e=='1'){
+				//发布成功后 自画面迁移
+				//parent.location.reload();
+				layer.msg("post successful");
+				location.href = "{% url 'article:article_list' %}";
+			}else if(e=='2'){
+				//db error
+				layer.msg("sorry exception");
+			}else{
+				layer.msg(e);
+			}
+		},//success 函数
+	}); //ajax完了
+};//function 完了
+</script>
+{% endblock %}

@@ -9,7 +9,7 @@
 	<div class = "col-xs-12 col-md-8">
 	<ul>
 		{% for blog in blogs %}
-			<li><a href="{{blog.id}}">{{blog.title}}</a></li> <!-- 第一层表达式,第二层这里表示引用变量 -->
+			<li><a href="/blog/{{blog.id}}">{{blog.title}}</a></li> <!-- 第一层表达式,第二层这里表示引用变量 -->
 		{% endfor %}
 	</ul>
 	

@@ -15,19 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.urls.conf import include
+from django.contrib.auth import views as auth_views
+from django.urls import path,include
 from django.urls import re_path
 
 from blog import views
-import blog
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path(r'^admin/', admin.site.urls),
     # path('blog/', views.blog_title,name='blog_title'), # 访问url,响应请求的函数,
-    # re_path(r'^$', include(('blog.urls','blog'),namespace='blog')),
-    re_path(r'blog/', include(('blog.urls','blog'),namespace='blog')),
+    re_path(r'^$', include(('blog.urls','blog'),namespace='blog')),
+    re_path(r'blog/', include(('blog.urls','blog'),namespace='blog')),#appname=blog namespace='blog'
+    #appname=blog namespace='blog'
+    re_path(r'account/', include(('account.urls','account'),namespace='account')),
+    re_path(r'^accounts/login/$', auth_views.LoginView.as_view(),name='user_login'),
+    path("account/password_change_done/", auth_views.PasswordChangeDoneView.as_view(), name="password_change_done"),#auth_view函数需要
+    path("password_reset/", include(('password_reset.urls','password_reset'),namespace='password_reset')),
+    path("article/", include(('article.urls','article'),namespace='article')),
+    
     
 ]

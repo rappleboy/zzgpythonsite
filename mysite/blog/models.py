@@ -18,7 +18,7 @@ class BlogArticles(models.Model):
     # 定义
 
     class Meta:
-        ordering = ("-publish",)  # 元组
+        ordering = ("publish",)  # 元组
 
     def __str__(self):
         return self.title

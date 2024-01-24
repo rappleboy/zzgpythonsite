@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'account',
+    'password_reset',
+    'article',
 ]
 
 #中间件
@@ -52,7 +55,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+#防止deny X-frame错误
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 ROOT_URLCONF = 'mysite.urls'
 
 TEMPLATES = [
@@ -109,7 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC' #timezong.now使用的当前时区
+TIME_ZONE='Asia/Shanghai'
+
 
 USE_I18N = True
 
@@ -126,3 +132,20 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#login后重定向url
+LOGIN_REDIRECT_URL="/blog/"
+# SMTP服务器
+EMAIL_HOST = 'smtp.163.com'
+# 你的邮箱名
+EMAIL_HOST_USER = 'rappleboy@163.com'
+# 你的邮箱密码
+EMAIL_HOST_PASSWORD = 'DVPKAPLHTXRCATBO'
+# 发送邮件的端口
+EMAIL_PORT = 465
+# 是否使用 TLS
+EMAIL_USE_SSL = True
+# 默认的发件人
+DEFAULT_FROM_EMAIL = 'rappleboy@163.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+mailliscense = 'DVPKAPLHTXRCATBO'
