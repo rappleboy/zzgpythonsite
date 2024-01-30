@@ -7,7 +7,8 @@ from .models import BlogArticles
 
 # Create your views here.
 def blog_title(request):
-    blogs = BlogArticles.objects.all()
+    # blogs = BlogArticles.objects.filter()
+    blogs = request.user.blog_posts.all()
     return render(request, "blog/titles.html", {"blogs": blogs})
 
 def blog_article(request,article_id):

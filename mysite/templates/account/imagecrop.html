@@ -54,7 +54,10 @@ $(window).load(function() {
 			type: 'POST',
 			data: {"img":img},
 			success:function(e){
-				location.href="{% url 'account:my_information' %}"
+				parent.location.reload();
+				layer.msg("good");
+				//parents.location.reload();//href="{% url 'account:my_information' %}"
+
 			},
 			
 			

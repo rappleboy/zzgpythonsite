@@ -7,6 +7,7 @@ from account.models import UserProfile, UserInfo
 
 #登录时使用表单
 class LoginForm(forms.Form):#继承
+    #这个表单没有使用 meta类和model关联
     username = forms.CharField() #输入框 type=text
     
     password = forms.CharField(widget=forms.PasswordInput)#widget规定密码输入框 type=password
@@ -21,7 +22,7 @@ class RegistrationForm(forms.ModelForm): #继承Model表单 涉及到数据库�
         #直接使用User model类,不需要新建,
         #内部类定义model数据更新到数据库哪个表,哪个字段     
         model = User #registerform 关联数据库 auth_user表,更新两个字段
-        fields = ("username","email") #只需要更新两个字段
+        fields = ("username","email") #form中自动产生和model关联的两个字段,自动生成input类型
         #password已经作为model属性定义,不需要在这里追加
         
         #下面放在在调用表单.is_valid()时被调用 clean_+属性名称”命名方式所创建的方法，都有类似的功能

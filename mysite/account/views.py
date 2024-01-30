@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls.base import reverse
 
 from .forms import LoginForm
 from .forms import RegistrationForm
-from .forms import UserProfileForm,UserInfoForm,UserForm
+from .forms import UserProfileForm, UserInfoForm, UserForm
 from .models import UserInfo, UserProfile
-
 
 
 # Create your views here.
@@ -25,12 +25,16 @@ def user_login(request):
             if user: #不为空
                 #调用django的login函数,在session中保存userid
                 login(request, user)
-                redirect_to='/blog/'
+                redirect_to='/home/'
                 return HttpResponseRedirect(redirect_to)
             else:
-                return HttpResponse("soryy your username or password is not right")
+                msg ="soryy your username or password is not right"
+                return render(request,"account/login.html",{"form":login_form,"msg":msg})
+                # return HttpResponse("soryy your username or password is not right")
         else:
-            return HttpResponse("invalid login")
+            msg ="invalid login ,try agiain"
+            # return HttpResponse("invalid login")
+            return render(request,"account/login.html",{"form":login_form,"msg":msg})
     if request.method == "GET":
         login_form = LoginForm()#空对象,未绑定
         return render(request,"account/login.html",{"form":login_form})
@@ -59,7 +63,7 @@ def user_register(request):
                     "Redirection loop for authenticated user detected. Check that "
                     "your LOGIN_REDIRECT_URL doesn't point to a login page."
                 )
-            return HttpResponseRedirect(redirect_to)
+            return HttpResponseRedirect(reverse('account:user_login'))
             
         else:
             

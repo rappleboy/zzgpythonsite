@@ -1,45 +1,73 @@
-{% load static %} <!-- 申明需要引入静态文件后面才能使用 -->
+{% load static %}
+<!-- 申明需要引入静态文件后面才能使用 -->
 <div class="container">
 	<nav class='navbar vavbar-default' role="navigation>">
-		<div class='navbar-header'>	
-	 		<a href="/">
-	 			<img src="{% static '/images/logo.jpeg' %}" width="100px"><!-- 引入图片路径,相对static开始 -->
-	 		</a>
-	 	</div>
-	 	<div>
-	 		<ul class="nav navbar-nav  navbar-left" role="navigation">
-	 			<li><a href="{% url 'blog:blog_title' %}">BLOG</a></li><!-- 使用url.py定义路径 -->
-	 		</ul>
-	 		<!-- 根据用户登录状态显示不同内容 -->
-	 		<ul class = "nav navbar-nav navbar-right" style="margin-right:10px">
-	 			{% if user.is_authenticated %}
-	 			<!-- 下来菜单形式 
+		<div class='navbar-header'>
+			<a href="/"> <img src="{% static '/images/logo.jpeg' %}"
+				width="100px">
+			<!-- 引入图片路径,相对static开始 -->
+			</a>
+		</div>
+		<div>
+			<ul class="nav navbar-nav  navbar-left" role="navigation">
+			
+				<li><a href="{% url 'home' %}">HOME</a></li>
+				<!-- 使用url.py定义路径 -->
+			</ul>
+			<ul class="nav navbar-nav  navbar-left" role="navigation">
+			
+				<li><a href="{% url 'blog:blog_title' %}">BLOG</a></li>
+				<!-- 使用url.py定义路径 -->
+			</ul>
+			<ul class="nav navbar-nav  navbar-left" role="tablist">
+				<!-- 导航栏靠左 -->
+				<li><a href="{% url 'article:article_titles' %}">Articles</a></li>
+				<li><a href="{% url 'saveimage:falls_images' %}">Images</a></li>
+				<li><a href="{% url 'course:course_list' %}">Courses</a></li>
+				<li><a href="{% url 'course:about' %}">About</a></li>
+				<!-- 使用url.py定义路径 -->
+			</ul>
+			<!-- 根据用户登录状态显示不同内容 -->
+			<ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+				{% if user.is_authenticated %}
+				<!-- 下来菜单形式 
 	 			<li><a href="#">{{user.username}}</a></li>-->
-	 			<li>
-	 			<div class="dropdown" style="margin-top:8px"><!-- div层包含上级和子菜单 -->
-	 				<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu' data-toggle='dropdown'>
-	 					{{user.username}}<span class='caret'></span>
-	 					<!-- 用户名变成下拉按钮格式,按下后显示子菜单 -->
-	 				</button>
-	 				<ul class='dropdown-menu'>
-	 				<!-- url 标签,后面是命名空间:name -->
-	 					<li><a href="{% url 'account:password_change' %}">Change Password</a><li>
-	 					<li><a href="{% url 'account:my_information' %}">My Information</a><li>
-	 					<li><a href="{% url 'article:article_column' %}">Article Manage</a><li>
-	 				</ul>
-	 				
-	 			</div>
-	 			</li>
-	 			
-	 			<li><a href="{% url 'account:user_logout' %}">Logout</a></li>
-	 			{% else %}
-	 			<li><a href="{% url 'account:user_login' %}">登录</a></li>
-	 			{% endif %}
-	 		</ul>
-	 	</div>
-	 </nav>
+				<li>
+					<div class="dropdown" style="margin-top: 8px">
+						<!-- div层包含上级和子菜单 -->
+						<button class='btn btn-default dropdown-toggle' type='button'
+							id='dropdownMenu' data-toggle='dropdown'>
+							{{user.username}}<span class='caret'></span>
+							<!-- 用户名变成下拉按钮格式,按下后显示子菜单 -->
+						</button>
+						<ul class='dropdown-menu'>
+							<!-- url 标签,后面是命名空间:name -->
+							<li><a href="{% url 'account:password_change' %}">Change
+									Password</a>
+							</li>
+							<li><a href="{% url 'account:my_information' %}">My Information</a>
+							</li>
+							<li><a href="{% url 'article:article_column' %}">Article
+									Manage</a>
+							</li>
+							<li><a href="{% url 'saveimage:list_images' %}">Images Manage</a>
+							</li>
+						</ul>
+
+					</div>
+				</li>
+
+				<li><a href="{% url 'account:user_logout' %}">Logout</a></li> 
+				{% else %}
+				<li><a href="{% url 'account:user_login' %}">登录</a></li> 
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
 </div>
-<script src="{% static 'js/jquery.js'%}"></script><!-- static标签,引入static目录 -->
+<script src="{% static 'js/jquery.js'%}"></script>
+<!-- static标签,引入static目录 -->
 <script src="{% static 'js/bootstrap.js'%}"></script>
-<script src="{% static 'js/jquery.min.js'%}"></script><!-- static标签,引入static目录 -->
+<script src="{% static 'js/jquery.min.js'%}"></script>
+<!-- static标签,引入static目录 -->
 <script src="{% static 'js/bootstrap.min.js'%}"></script>

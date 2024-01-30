@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'account',
     'password_reset',
     'article',
+    'saveimage',
+    'sorl.thumbnail',
+    'course',
+
 ]
 
 #中间件
@@ -148,4 +152,17 @@ EMAIL_USE_SSL = True
 # 默认的发件人
 DEFAULT_FROM_EMAIL = 'rappleboy@163.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-mailliscense = 'DVPKAPLHTXRCATBO'
+
+
+REDIS_HOST='localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+#图片保存全局变量
+
+
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
+
+from django.core.handlers.wsgi import WSGIRequest
+WSGIRequest.is_ajax = property(lambda self: self.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest')

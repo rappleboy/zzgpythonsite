@@ -14,12 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path,include
+from django.urls import path, include
 from django.urls import re_path
-
-from blog import views
+from django.views.generic.base import RedirectView, TemplateView
 
 
 urlpatterns = [
@@ -30,10 +31,16 @@ urlpatterns = [
     re_path(r'blog/', include(('blog.urls','blog'),namespace='blog')),#appname=blog namespace='blog'
     #appname=blog namespace='blog'
     re_path(r'account/', include(('account.urls','account'),namespace='account')),
-    re_path(r'^accounts/login/$', auth_views.LoginView.as_view(),name='user_login'),
+    # re_path(r'^accounts/login/$', auth_views.LoginView.as_view(),name='user_login'),
     path("account/password_change_done/", auth_views.PasswordChangeDoneView.as_view(), name="password_change_done"),#auth_view函数需要
     path("password_reset/", include(('password_reset.urls','password_reset'),namespace='password_reset')),
     path("article/", include(('article.urls','article'),namespace='article')),
+    path("saveimage/", include(('saveimage.urls','saveimage'),namespace='saveimage')),
+    re_path(r'^favicon.ico$', RedirectView.as_view(url=r'/static/favicon.ico')),
+    path(r'home/', TemplateView.as_view(template_name='home.html'),name='home'),
+    path(r'course/', include(('course.urls','course'),namespace='course')),
     
     
 ]
+# MEDIA_URL /media/' 定义/media/的绝对路径
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

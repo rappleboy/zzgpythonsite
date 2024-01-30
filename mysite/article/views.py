@@ -1,7 +1,11 @@
 
 
 
+import json
+
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models.aggregates import Count
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -81,12 +85,24 @@ def article_post(request):
                 #
                 new_article.author= request.user
                 #article_post的外键定义中使用了related_name参数,所以可以使用uesr.article_column
-                new_article.column = request.user.article_column.get(id=request.POST['column_id'])
+                new_article.column = request.user.article_column.get(id=request.POST['column_id']) #column_id不属于ArticlePostForm的项目,需要独立取得
+                #new_article.tag = request.user.tag.get(id=request.POST['tag_id'])
                 new_article.save()
-                return HttpResponse("1")
-            except:
+                #处理tags
+                tags = request.POST['tags']
+
+                
+                if tags:
+                    for atag in json.loads(tags):
+                
+                        tag=request.user.tag.get(tag=atag)
+                        new_article.article_tag.add(tag) #多对多,add添加
+                        new_article.save()
+                
+                return HttpResponse("0")
+            except Exception as e:
                 #db error
-                return HttpResponse("2")
+                return HttpResponse(e)
         else:
             #isvalid error
             return HttpResponse(article_post_form.errors)          
@@ -94,19 +110,50 @@ def article_post(request):
     if request.method=="GET":
         #get 显示
         article_post_form = ArticlePostForm()
+        #增加标签显示
+        articletags = request.user.tag.all()
         # user对象object的all(方法),外键定义中使用了related_name参数,所以可以使用uesr.article_column
         article_columns = request.user.article_column.all()
-        return render(request,"article/column/article_post.html",{"article_post_form":article_post_form,"article_columns":article_columns})
+        return render(request,"article/column/article_post.html",{"article_post_form":article_post_form,"article_columns":article_columns,\
+               "articletags":articletags})
 @login_required(login_url='/account/login')      
 def article_list(request):  
+    msg = None
+    #引入内置的分页功能
     articles = ArticlePost.objects.filter(author=request.user) #使用relatedname
     
-    return render(request,"article/column/article_list.html",{'articles':articles})
+    paginator = Paginator(articles,5) #初始化分页器 每页显示2条数据
+    page = request.GET.get('page')#本次请求的页数
+    try:
+
+        current_page = paginator.page(page) #得到 指定page No的内容,必须大于0整数 ,不能为空否则异常
+        articles = current_page.object_list
+    except PageNotAnInteger:
+        msg="PageNotAnInteger is not set"
+        current_page = paginator.page(1)
+
+        articles = current_page.object_list
+    except EmptyPage:
+        msg="EmptyPage"
+        current_page = paginator.page(paginator.num_pages) #返回当前的页码
+        articles = current_page.object_list
+        # current_page.paginator.page_number
+        
+    
+    return render(request,"article/column/article_list.html",{'articles':articles,'page':current_page,'msg':msg})
 @login_required(login_url='/account/login')      
 def article_detail(request,id,slug):  
     article = get_object_or_404(ArticlePost,id=id,slug=slug)
-    
-    return render(request,"article/column/article_detail.html",{'article':article})
+    #增加相同标签推荐文章
+    #得到这个文章的标签列表
+    article_tags_ids = article.article_tag.values_list(id,flat=True) #得到一个元组列表[(2,)(3,)],使用flat=True得到数组[2,3]
+    print("*************article_tags_ids",article_tags_ids)
+    #查询所有标签 in 标签列表的文章列表
+    similar_articles=ArticlePost.objects.filter(article_tag__in=article_tags_ids).exclude(id=article.id)#where id in ids and id <> currentid
+    # 对一个列表加一列注释属性,属性名 same_tag, 值=count(tag)
+    similar_articles = similar_articles.annotate(same_tag=Count("article_tag")).order_by('-same_tags','-created')[:4]
+    print("*************similar_articles",similar_articles)
+    return render(request,"article/column/article_detail.html",{'article':article,"similar_articles":similar_articles})
 
 @login_required(login_url='/account/login')      
 def article_test(request):  
@@ -133,20 +180,35 @@ def article_del(request):
 def article_edit(request,article_id):
     if request.method =="GET":
         article_columns=request.user.article_column.all()
+
+        article_tags=request.user.tag.all()
         article = ArticlePost.objects.get(id=article_id)
         this_article_form = ArticlePostForm(initial={"title":article.title})
         this_article_column = article.column
+        this_article_tags = article.article_tag.all()
+        
         
         return render(request,"article/column/article_edit.html",{"this_article_form":this_article_form,"article_columns":article_columns,
-                               "this_article_column":this_article_column,"article":article})
+                               "this_article_column":this_article_column,"this_article_tags":this_article_tags,"article":article,"article_tags":article_tags})
     # 填充form
-    else:
+    if request.method =="POST":
+        #post
         try:
             article = ArticlePost.objects.get(id=article_id)
             article.column =request.user.article_column.get(id=request.POST['column_id'])
             article.title = request.POST['title']
             article.body = request.POST['body']
             article.save()
+            tags = request.POST['tags']
+            if tags:
+                for atag in json.loads(tags):
+                    if len(article.article_tag.filter(tag=atag))>1:
+                        pass
+                    else:
+                        tag=request.user.tag.get(tag=atag)
+                        article.article_tag.add(tag) #多对多,add添加
+                        article.save()
+                        
             #成功0
             return HttpResponse("0")
         except Exception as e:

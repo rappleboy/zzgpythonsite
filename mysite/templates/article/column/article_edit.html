@@ -30,6 +30,19 @@
 			</select>
 		</div>
 	</div>
+	<!-- 使用多选框 -->
+	<div class="row" style="margin-top:10px;">
+		<div class="col-md-2 text-right"><span>select tags:</span></div>
+		<div class="col-md-10 text-left">
+			{% for tag in article_tags %}
+			<label class="checkbox-inline">
+			
+			<input class="tagcheckbox" type="checkbox" id={{tag.id}} value = {{tag.tag}} name="article_tag">
+			{{tag.tag}}
+			</label>
+			{% endfor %}
+		</div>
+	</div>
 	<div class="row" style="margin-top:10px;">
 		<div class="col-md-2 text-right"><span>Content:</span></div>
 		<!-- 使用markdown空间 -->
@@ -55,6 +68,7 @@
 <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/layer.js' %}"></script>
+<script src="{% static 'js/json2.js' %}"></script>
 <script src="{% static 'editor/editormd.min.js' %}"></script>
 
  
@@ -84,12 +98,14 @@ function article_edit(article_id){
 	//编辑图标的父类tr,下面第一个td的text 得到name
 	var title = $("#id_title").val(); //由form自动分配的id
 	var column_id = $("#which_column").val(); //
-	var body = $("#id_body").val();			
+	var body = $("#id_body").val();	
+	var tags=[];
+	$.each($("input[name='article_tag']:checked"),function(){tags.push($(this).val());})
 	//调用ajax异步提交
 	$.ajax({
 		url:'{% url "article:article_edit" article.id %}',
 		type:'POST',
-		data:{"title":title,"body":body,"column_id":column_id},
+		data:{"title":title,"body":body,"column_id":column_id,"tags":JSON.stringify(tags)},
 		success:function(e){
 			if(e=='0'){
 				//发布成功后 自画面迁移

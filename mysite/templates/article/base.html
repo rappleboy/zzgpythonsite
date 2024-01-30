@@ -20,6 +20,10 @@
 		</div>
 		<!-- 内容部 -->
 		<div class="col-md-10">
+		<!--  这里显示msg -->
+		{% if msg %}
+		<p>{{msg}}</p>
+		{% endif %}
 		{% block content %}
 		{% endblock %}
 		</div>
