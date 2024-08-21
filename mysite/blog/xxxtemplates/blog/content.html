@@ -1,0 +1,21 @@
+{% extends "base.html" %} <!-- 继承baee模板, 使用block内容代替里面的块定义部分 -->
+{% block title %} blog titles {% endblock %}
+<!-- 下面开始定义内容block -->
+{% block content %}
+<div class="row text-center vertical-moddle-sm">
+	<h1>{{article.title}}</h1>
+</div>
+<div class = "row">
+	<div class = "col-xs-12 col-md-8">
+		<p class="text-center">
+		<span>{{ article.author.username }}</span>
+		<span style="margin-left:20px">{{publish}}</span>
+		</p>
+		<div>{{article.body}}</div>
+	
+	</div>
+	
+
+
+</div>
+{% endblock %}
