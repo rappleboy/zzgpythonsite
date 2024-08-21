@@ -1,0 +1,143 @@
+{% extends "article/base.html" %} <!-- 继承 -->
+{% load static %}
+{% block title%}article column {% endblock %}
+{% block content %}
+<div>
+	<p class="text-right"><button class="btn btn-primary" onclick="add_column()">add column</button></p>
+	<table class="table table-hover">
+		<tr>
+			<td>No.</td>
+			<td>Column Name</td>
+			<td>Manage</td>
+		</tr>
+		{% for column in columns %}<!-- 循环 -->
+		<tr>
+			<td>{{forloop.counter}}</td> <!-- 自动循环计数 -->
+			<td>{{column.column}}</td>
+			<td>
+				<a name="edit" href="javascript:" onclick="edit_column(this,{{column.id}})">
+				<span class="glyhpicon glyphicon-pencil"></span>
+				</a>
+				<a name="delete" href="javascript:" onclick="del_column(this,{{column.id}})">
+				<span class="glyphicon glyphicon-remove" style="margin-left:20px;"></span>
+				</a>
+			</td>
+		</tr>
+		{% empty %} <!--  如果for循环变量 columns为空执行下面语句 省略了if判断 -->
+		<p>there is no column </p>
+		{% endfor %}
+
+	
+	</table>
+
+</div>
+<script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+<script type="text/javascript" src='{% static "js/layer.js" %}'></script>
+<script type="text/javascript">
+function add_column(){
+var index=layer.open({
+	type:1,
+	skin:"layui-layer-rim",
+	area:["400px","200px"],
+	title: "add column",
+	content:'<div class="text-center" style="margin-top:20px"><p>input column name</p><p><input id="id_column" type="text"></p></div>',
+	btn:['OK','cancel'],
+	yes:function(index,layero){
+		column_name=$('#id_column').val();
+		//调用ajax异步提交
+		$.ajax({
+			url:'{% url "article:article_column" %}',
+			type:'POST',
+			data:{'column':column_name},
+			success:function(e){
+				if(e=='1'){
+					parent.location.reload();
+					layer.msg("good");
+				}else{
+					//有重复
+					layer.msg("has a same column name")
+				}
+			},
+		});
+
+	},
+	//取消按钮
+	btn2:function(index,layero){
+		layer.close(index);
+	}		
+});	
+}
+//控件对象和id
+function edit_column(the,column_id){
+	//编辑图标的父类tr,下面第一个td的text 得到name
+	var name = $(the).parents("tr").children("td").eq(1).text()
+	var index=layer.open({
+		type:1,
+		skin:"layui-layer-rim",
+		area:["400px","200px"],
+		title: "edit column",
+		content:'<div class="text-center" style="margin-top:20px"><p>edit column name</p><p><input id="new_name" value="'+name+'" type="text"></p></div>',
+		btn:['OK','cancel'],
+		yes:function(index,layero){
+			new_name=$('#new_name').val();
+			//调用ajax异步提交
+			$.ajax({
+				url:'{% url "article:rename_article_column" %}',
+				type:'POST',
+				data:{"new_name":new_name,"column_id":column_id},
+				success:function(e){
+					if(e=='1'){
+						parent.location.reload();
+						layer.msg("good");
+					}else{
+						//有重复
+						layer.msg("new column name save failed")
+					}
+				},
+			});
+
+		},
+		//取消按钮
+		btn2:function(index,layero){
+			layer.close(index);
+		}		
+	});	
+	}
+//控件对象和id
+function del_column(the,column_id){
+	//编辑图标的父类tr,下面第一个td的text 得到name
+	var name = $(the).parents("tr").children("td").eq(1).text()
+	var index=layer.open({
+		type:1,
+		skin:"layui-layer-rim",
+		area:["400px","200px"],
+		title: "del column",
+		content:'<div class="text-center" style="margin-top:20px"><p>are you sure to delete column "'+name+'"</p></div>',
+		btn:['OK','cancel'],
+		yes:function(index,layero){
+			
+			//调用ajax异步提交
+			$.ajax({
+				url:'{% url "article:del_article_column" %}',
+				type:'POST',
+				data:{"column_id":column_id},
+				success:function(e){
+					if(e=='1'){
+						parent.location.reload();
+						layer.msg(name+"is deleted");
+					}else{
+						//有重复
+						layer.msg("delete failed")
+					}
+				},
+			});
+
+		},
+		//取消按钮
+		btn2:function(index,layero){
+			layer.close(index);
+		}		
+	});	
+}
+</script>
+{% endblock %}
