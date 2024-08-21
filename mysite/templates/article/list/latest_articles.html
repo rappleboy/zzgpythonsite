@@ -1,7 +1,0 @@
-<ul>
-	{% for article in latest_articles %} <!-- 从inclustion标签传过来 -->
-	<li>
-		<a href="{{article.get_url_path}}">{{article.title}}</a>
-	</li>
-	{% endfor %}
-</ul>
